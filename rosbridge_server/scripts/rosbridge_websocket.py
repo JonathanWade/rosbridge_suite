@@ -34,7 +34,7 @@
 import rospy
 import json
 
-from rosauth.srv import Authentication
+#from rosauth.srv import Authentication
 
 from signal import signal, SIGINT, SIG_DFL
 from functools import partial
@@ -72,29 +72,29 @@ class RosbridgeWebSocket(WebSocketHandler):
     def on_message(self, message):
         global authenticate
         # check if we need to authenticate
-        if authenticate and not self.authenticated:
-            try:
-                msg = json.loads(message)
-                if msg['op'] == 'auth':
-                    # check the authorization information
-                    auth_srv = rospy.ServiceProxy('authenticate', Authentication)
-                    resp = auth_srv(msg['mac'], msg['client'], msg['dest'], 
-                                                  msg['rand'], rospy.Time(msg['t']), msg['level'], 
-                                                  rospy.Time(msg['end']))
-                    self.authenticated = resp.authenticated
-                    if self.authenticated:
-                        rospy.loginfo("Client %d has authenticated.", self.protocol.client_id)
-                        return
+        #if authenticate and not self.authenticated:
+        #    try:
+        #        msg = json.loads(message)
+        #        if msg['op'] == 'auth':
+        #            # check the authorization information
+        #            auth_srv = rospy.ServiceProxy('authenticate', Authentication)
+        #            resp = auth_srv(msg['mac'], msg['client'], msg['dest'], 
+        #                                          msg['rand'], rospy.Time(msg['t']), msg['level'], 
+        #                                          rospy.Time(msg['end']))
+        #            self.authenticated = resp.authenticated
+        #            if self.authenticated:
+        #                rospy.loginfo("Client %d has authenticated.", self.protocol.client_id)
+        #                return
                 # if we are here, no valid authentication was given
-                rospy.logwarn("Client %d did not authenticate. Closing connection.", 
-                              self.protocol.client_id)
-                self.close()
-            except:
-                # proper error will be handled in the protocol class
-                self.protocol.incoming(message)
-        else:
-            # no authentication required
-            self.protocol.incoming(message)
+        #        rospy.logwarn("Client %d did not authenticate. Closing connection.", 
+        #                      self.protocol.client_id)
+        #        self.close()
+        #    except:
+        #        # proper error will be handled in the protocol class
+        #        self.protocol.incoming(message)
+        #else:
+        # no authentication required
+        self.protocol.incoming(message)
 
     def on_close(self):
         global clients_connected
